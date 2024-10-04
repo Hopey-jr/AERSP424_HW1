@@ -1,5 +1,7 @@
 // Homework 1 Aersp 424
 //Group Members: Andrea Gandhi, Alex Gleba, Claudia Hunt, Jonathon Hope
+// Questions 2,3,4
+
 #include <iostream>
 #include <string>
 #include <vector>
