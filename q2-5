@@ -1,3 +1,10 @@
+//
+//  main.cpp
+//  Hw1_424
+//
+//  Created by jonathon hope on 10/4/24.
+//
+
 // Homework 1 Aersp 424
 //Group Members: Andrea Gandhi, Alex Gleba, Claudia Hunt, Jonathon Hope
 // Questions 1,2,3,4
@@ -23,7 +30,7 @@ struct Flight {
 // PROBLEM 3 & 4 /////////////////////////////////
 class Plane {
 
-    // initialize inputs for constructor 
+    // initialize inputs for constructor
     string from;
     string to;
 
@@ -40,7 +47,7 @@ private:
 public:
     //public class memmbers
 
-        //constructor 
+        //constructor
     Plane(const string& from, const string& to) :from(from), to(to), pos(0), vel(0),
         dist(0), origin(from), destination(to), at_SCE(true) {   /*assign string variables "from" and
         "to" to "origin" and "destination" variables*/
@@ -54,12 +61,12 @@ public:
         std::cout << "Plane created at: " << this << std::endl;
     }
 
-    //deconstructor 
+    //deconstructor
     ~Plane() {
         std::cout << "Plane Destroyed" << std::endl;
     }
     std::vector<Flight> flight_distance;
-    //getter functions 
+    //getter functions
     // make constant so that they always return the value of corresponding variable
     double get_pos() const { return pos; }
     std::string get_origin() const { return origin; }
@@ -68,29 +75,42 @@ public:
     double vel_func_get() const { return vel; }
     // set velocity
     void set_vel(double velocity) { vel = velocity; }
+    //void get_dist() const {return distance;}
 
-
+    void get_distance() {
+            for (const auto& flight : flight_distance) {
+                if (flight.from == origin && flight.to == destination) {
+                   dist = flight.distance;
+                    return;
+                }
+            }
+            dist = 0; // If no flight matches, set distance to 0
+        }
+    
+    
     // function that returns nothing
     void operate(double dt) {
-        // distance comm
-        if (pos <= dist) {
-            pos += vel * dt;
-            at_SCE = 0;
-            return;
+     
+     get_distance();
+     if (pos <= dist) {
+         pos += vel/3600 * dt;
+         cout << "pos: " << pos << endl;
+         at_SCE = 0;
+         return;
 
-        }
-        else {
-            if (destination == "SCE") {   // yes
-                at_SCE = 1;
-            }
-            else {
+     }
+     else {
+         if (destination == "SCE") {   // yes
+             at_SCE = 1;
+         }
+         else {
 
-            }
-            std::swap(origin, destination);
-            std::swap(from, to);
-            pos = 0.0;
-            return;
-        }
+         }
+         std::swap(origin, destination);
+         std::swap(from, to);
+         pos = 0.0;
+         return;
+     }
     }
 
 };
@@ -99,7 +119,11 @@ public:
 
 int main() {
     //create object to reference memory address
-    Plane plane;
+    
+    
+    string origin = "SCE";
+    string destination = "PHL";
+    Plane plane("SCE","PHL");
 
     // create a vector flight, then push the data of each flight into that vector
     std::vector<Flight> flight_distance;
@@ -112,15 +136,23 @@ int main() {
 
     //Question 5
     plane.set_vel(450);
-    double timeStep = 80;
+    double timeStep = 15;
     timeStep = timeStep;
 
     int maxIterations = 1500;
+    int q5Iterations = 0;
+    double dist = 0;
+    for (const Flight& flight: flight_distance) {
+        if (flight.from == origin && flight.to == destination) {
+         dist = flight.distance;
+        }
+    }
 
-    for (int q5Iterations = 0; q5Iterations <= maxIterations; ++q5Iterations)
+    while(q5Iterations <= maxIterations && plane.get_pos() <= dist)
     {
         std::cout << "Time = " << timeStep*q5Iterations << "seconds.  Position = " << plane.get_pos() << "miles. \n";
         plane.operate(timeStep);
+        ++q5Iterations;
     }
 
     return 0;
