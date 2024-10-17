@@ -1,0 +1,27 @@
+//Question 6
+//Add below plane class
+class Pilot 
+{
+private:
+    string name;
+
+public:
+    //Constructor
+    Pilot(string name) 
+    {
+        this->name = name;
+        cout << "Pilot " << name << " with memory address " << this << " is at the gate and ready to board the plane." <<  endl;
+    }
+    //Destructor
+    ~Pilot()
+    {
+        cout << "Pilot " << name << " is out of the airplane." << endl;
+    }
+    //Getter function for name
+    string get_name() const
+    {
+        return name;
+    }
+    //Pointer to object in plane class
+    Plane* myPlane;
+};
