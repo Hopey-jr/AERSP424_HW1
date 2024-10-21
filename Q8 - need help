@@ -1,8 +1,4 @@
 
-// Homework 1 Aersp 424
-//Group Members: Andrea Gandhi, Alex Gleba, Claudia Hunt, Jonathon Hope
-// Questions 1,2,3,4
-
 #include <iostream>
 #include <string>
 #include <cstring>
@@ -426,12 +422,12 @@ int main() {
 
     }
     /*
-    plane->~Plane();
-        free(plane);
+        plane->~Plane();
+      // delete (plane);
         pilot->~Pilot();
-        free(pilot);
-        copilot->~Pilot();
-        free(copilot);
+       // delete (pilot);
+       // copilot->~Pilot();
+       // delete (copilot);
 */
     return 0;
 }
