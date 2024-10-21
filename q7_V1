@@ -1,11 +1,5 @@
 //
 //  main.cpp
-//  week1_knowledge_quiz
-//
-//  Created by jonathon hope on 9/6/24.
-//
-//
-//  main.cpp
 //  Hw1_424
 //
 //  Created by jonathon hope on 10/4/24.
@@ -87,45 +81,45 @@ public:
     //void get_dist() const {return distance;}
 
     void get_distance() {
-            for (const auto& flight : flight_distance) {
-                if (flight.from == origin && flight.to == destination) {
-                   dist = flight.distance;
-                    return;
-                }
-                else if (flight.from == destination && flight.to == origin) {
-                    dist = flight.distance;
-                     return;
-                 }
+        for (const auto& flight : flight_distance) {
+            if (flight.from == origin && flight.to == destination) {
+                dist = flight.distance;
+                return;
             }
-            dist = 0; // If no flight matches, set distance to 0
+            else if (flight.from == destination && flight.to == origin) {
+                dist = flight.distance;
+                return;
+            }
         }
-    
-    
+        dist = 0; // If no flight matches, set distance to 0
+    }
+
+
     // function that returns nothing
     void operate(double dt) {
-     
-     get_distance();
-     if (pos <= dist) {
-         pos += vel/3600 * dt;
-         cout << "pos: " << pos << endl;
-         cout << "dist: " << dist << endl;
-         at_SCE = 0; //false
-         return;
 
-     }
-     else {
-         if (destination == "SCE") {   // yes
-             at_SCE = 1; //true
-         }
-         else {
+        get_distance();
+        if (pos <= dist) {
+            pos += vel / 3600 * dt;
+            cout << "pos: " << pos << endl;
+            cout << "dist: " << dist << endl;
+            at_SCE = 0; //false
+            return;
 
-         }
-         std::swap(origin, destination);
-         std::swap(from, to);
-         pos = 0.0;
-         cout << "You are at your destination"<< endl;
-         return;
-     }
+        }
+        else {
+            if (destination == "SCE") {   // yes
+                at_SCE = 1; //true
+            }
+            else {
+
+            }
+            cout << "Flight from " << origin << " to " << destination << " finished" << endl; //this displays at end of timestep too - how to fix?
+            std::swap(origin, destination);
+            std::swap(from, to);
+            pos = 0.0;
+            return;
+        }
     }
 
 };
@@ -142,7 +136,7 @@ public:
     Pilot(string name)
     {
         this->name = name;
-        cout << "Pilot " << name << " with memory address " << this << " is at the gate and ready to board the plane." <<  endl;
+        cout << "Pilot " << name << " with memory address " << this << " is at the gate and ready to board the plane." << endl;
     }
     //Destructor
     ~Pilot()
@@ -157,14 +151,18 @@ public:
     //Pointer to object in plane class
     Plane* myPlane;
 };
-
+void swap (Pilot*& pilot, Pilot*& copilot)
+{
+    swap(pilot, copilot);
+    swap(pilot->myPlane, copilot->myPlane);
+}
 int main() {
     //create object to reference memory address
-    
-    
+
+
     string origin = "SCE";
     string destination = "PHL";
-    Plane plane("SCE","PHL");
+    Plane plane("SCE", "PHL");
 
     // create a vector flight, then push the data of each flight into that vector
     std::vector<Flight> flight_distance;
@@ -182,47 +180,52 @@ int main() {
 
     int maxIterations = 1500;
     int q5Iterations = 0;
-   
+
+
+    while (q5Iterations <= maxIterations)
+    {
+        std::cout << "Time = " << timeStep * q5Iterations << "seconds.  Position = " << plane.get_pos() << "miles. \n";
+        plane.operate(timeStep);
+        ++q5Iterations;
+
+        if (plane.get_at_SCE()) {
+            
+        }
+    }
+    // Question 7
     Pilot pilot("Alpha");
     Pilot copilot("Beta");
     pilot.myPlane = &plane;
     copilot.myPlane = &plane;
-    
+
+
+
+
     //pilot = alpha
     //copilot= beta
-    
+
     // out name, memory address, memory address of plane
     // print out who is in control of the plane
-    while(q5Iterations <= maxIterations)
-    {
-        
-        
-        
-        
-        
-        //std::cout << "Time = " << timeStep*q5Iterations << "seconds.  Position = " << plane.get_pos() << "miles. \n";
-        
-        //WILL NEED TO PRINT OUT WHEN IT SWITCHES IN THE FUNCTIONS ABOVE -already done
-        //WILL NEED TO PRINT OUT WHEN IT LANDS AT FINAL DESTINATION IN THE FUNCTIONS ABOVE -already done
+    int q7Iterations = q5Iterations;
 
+    while (q7Iterations <= maxIterations)
+    {
         plane.operate(timeStep);
-        if(plane.get_at_SCE()){
-            std::swap(pilot, copilot);
-            
-            cout << "Pilot " << pilot.get_name() << "with certificate number " << << endl;
+        
+        if (q7Iterations == 0)
+        {
+            cout << "The plane is at SCE" << endl;
+            //Call pilot and get name and memory address to cout
+        }
+        if (plane.get_at_SCE())
+        {
+            cout << "The plane is at SCE" << endl;
+            swap(pilot, copilot);
+            //Call Pilot and get name and memory address to cout
         }
         
-        
-        
-        
-        
-        ++q5Iterations;
+        q7Iterations++;
     }
-    
-    
 
-    
-    
-    
     return 0;
 }
