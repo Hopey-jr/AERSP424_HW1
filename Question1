@@ -179,7 +179,7 @@ while (gross_weight > max_gross_weight || cg_location > aft_cg_limit || cg_locat
         {cout << "The amount of fuel that needs to be drained is " << abs(addfuel) << " gallons to meet the limits.\n";
         }
         cout << "The new total weight of the airplane is " << gross_weight << " pounds.\n";
-        std::cout << "The new location of the C.G. is " << cg_location << " inches.\n";
+        cout << "The new location of the C.G. is " << cg_location << " inches.\n";
     }
     
 }
