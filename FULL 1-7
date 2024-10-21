@@ -1,0 +1,435 @@
+//  Hw1_424
+//
+//  Created by jonathon hope on 10/4/24.
+//
+
+// Homework 1 Aersp 424
+//Group Members: Andrea Gandhi, Alex Gleba, Claudia Hunt, Jonathon Hope
+// Questions 1,2,3,4
+
+#include <iostream>
+#include <string>
+#include <vector>
+using namespace std;
+
+// Question 1
+void Question1(double gross_weight, double cg_location)
+{
+    // Recieving information from the user (Inputs)
+
+    // Determine Airplane empty weight variable 
+    double Wempty; // lbs
+    cout << "Enter Airplane empty-weight (lb): " << endl;
+    cin >> Wempty;
+
+    // Determine Airplane empty weight moment variable 
+    double Wemptymoment; // (lb*in)
+    cout << "Enter Airplane empty-weight moment (lb*in): " << endl;
+    cin >> Wemptymoment;
+
+    // Determine the number of front seat occupants
+    double frontseat;
+    cout << "Enter the number of front seat occupants: " << endl;
+    cin >> frontseat;
+
+    double frontseatweight = 0;
+    // Determine the weight of each front seat occupant variable
+    double occupantweight;
+    for (int i = 0; i < frontseat; i++)
+    {
+        cout << "Enter the weight of the each front seat occupant (lbs):" << i + 1 << endl;
+        cin >> occupantweight;
+        frontseatweight += occupantweight;
+    };
+
+    // Determine the front seat moment arm variable 
+    double frontseatmomentarm; // inches
+    cout << "Enter the front seat moment arm (inches): " << endl;
+    cin >> frontseatmomentarm;
+
+    // Determine the number of rear seat occupants
+    double rearseat;
+    cout << "Enter the number of rear seat occupants: " << endl;
+    cin >> rearseat;
+
+    double rearseatweight = 0;
+    // Determine the weight of each front seat occupant variable 
+    double occupantweights;
+    for (int j = 0; j < rearseat; j++)
+    {
+        cout << "Enter the weight of each rear seat occupant (lbs): " << j + 1 << endl;
+        cin >> occupantweights;
+        rearseatweight += occupantweights;
+    };
+
+    // Determine the rear seat moment arm variable 
+    double rearseatmomentarm; // inches
+    cout << "Enter the rear seat moment arm (inches): " << endl;
+    cin >> rearseatmomentarm;
+
+    // Determine the number of gallons of usable fuel variable
+    double usablefuel; // gallons
+    cout << "Enter the number of gallons of usable fuel (gallons): " << endl;
+    cin >> usablefuel;
+
+    // Determine the usable fuel weights per gallon variable
+    double usablefuelweights; // pounds 
+    cout << "Enter the number of usable fuel weights per gallon (pounds): " << endl;
+    cin >> usablefuelweights;
+
+    // Determine the fuel tank moment arm variable 
+    double fueltankmomentarm; // inches
+    cout << "Enter the fuel tank moment arm (inches): " << endl;
+    cin >> fueltankmomentarm;
+
+    // Determine the baggage weight variable
+    double baggageweight; // pounds
+    cout << "Enter the baggage weight (pounds): " << endl;
+    cin >> baggageweight;
+
+    // Determine the baggage moment arm variable
+    double baggagemomentarm; // inches
+    cout << "Enter the baggage moment arm (inches): " << endl;
+    cin >> baggagemomentarm;
+
+
+    // Calculating the gross weight
+    double front_weight;
+    front_weight = frontseatweight;
+
+    double rear_weight;
+    rear_weight = rearseatweight;
+
+    double fuel_weight;
+    fuel_weight = usablefuel * usablefuelweights;
+
+    gross_weight = (front_weight + rear_weight + baggageweight + fuel_weight + Wempty);
+
+    // Calculating the total moments 
+
+    // Moment = distance * force
+    // Weight is the force since weight = mass*gravity (F=ma)
+    // Distance is the moment arm 
+
+    double front_seat_moment;
+    front_seat_moment = frontseatmomentarm * frontseatweight;
+
+    double rear_seat_moment;
+    rear_seat_moment = rearseatmomentarm * rearseatweight;
+
+    double baggage_moment;
+    baggage_moment = baggagemomentarm * baggageweight;
+
+    double fuel_moment;
+    fuel_moment = fueltankmomentarm * fuel_weight;
+
+    double total_moment;
+    total_moment = (front_seat_moment + rear_seat_moment + baggage_moment + fuel_moment + Wemptymoment);
+
+    // Hard coded numbers based on problem statement - max values
+    const double max_gross_weight = 2950; // lbs
+    const double forward_cg_limit = 82.1; // inches
+    const double aft_cg_limit = 84.7; // inches
+
+    // Calculating the CG location
+    cg_location = total_moment / gross_weight;
+
+    if (gross_weight < max_gross_weight && cg_location < aft_cg_limit && cg_location > forward_cg_limit)
+    {
+        cout << "The airplane is within the design limits." << endl;
+    }
+    else
+    {
+        cout << "The airplane is not within limits...yet" << endl;
+    }
+
+    int gallonsoffuel = usablefuel;
+    // Check if the airplane is within design limits
+    while (gross_weight > max_gross_weight || cg_location > aft_cg_limit || cg_location < forward_cg_limit)
+    {
+        if (gross_weight > max_gross_weight)
+        {
+            usablefuel -= 0.01; // lbs
+        }
+        else if (cg_location < aft_cg_limit)
+        {
+            usablefuel -= 0.01; // lbs
+        }
+        else if (cg_location > forward_cg_limit)
+        {
+            usablefuel += 0.01; // lbs
+        }
+
+        // Recalculating the total weight and CG location
+        gross_weight = 0;
+        total_moment = 0;
+
+        front_weight = frontseatweight;
+        rear_weight = rearseatweight;
+        fuel_weight = usablefuel * usablefuelweights;
+        gross_weight = (front_weight + rear_weight + baggageweight + fuel_weight + Wempty);
+
+        front_seat_moment = frontseatmomentarm * frontseatweight;
+        rear_seat_moment = rearseatmomentarm * rearseatweight;
+        baggage_moment = baggagemomentarm * baggageweight;
+        fuel_moment = fueltankmomentarm * fuel_weight;
+        total_moment = (front_seat_moment + rear_seat_moment + baggage_moment + fuel_moment + Wemptymoment);
+
+        cg_location = total_moment / gross_weight;
+
+    }
+    if (gross_weight > max_gross_weight && cg_location > aft_cg_limit && cg_location < forward_cg_limit)
+    {
+        cout << "The airplane is not within the design limits." << endl;
+    }
+    // Output results involving fuel added/drained
+    double addfuel = usablefuel - gallonsoffuel; // Assuming initial fuel is 44 gallons
+    if (addfuel > 0)
+    {
+        cout << "The amount of fuel that needs to be added is " << abs(addfuel) << " gallons to meet the limits.\n";
+    }
+
+    if (addfuel < 0)
+    {
+        cout << "The amount of fuel that needs to be drained is " << abs(addfuel) << " gallons to meet the limits.\n";
+    }
+    cout << "The new total weight of the airplane is " << gross_weight << " pounds.\n";
+    std::cout << "The new location of the C.G. is " << cg_location << " inches.\n";
+}
+
+// PROBLEM 2 //////////////////////////////////
+// single container (struct)
+
+#include <iostream>
+#include <string>
+#include <vector>
+using namespace std;
+class Pilot;
+class Plane;
+// PROBLEM 2 //////////////////////////////////
+// single container (struct)
+struct Flight {
+
+    //innitialize inputs for struct named, "Flight"
+    string from;
+    string to;
+    int distance;
+
+    Flight(const string& from, const string& to, int distance)
+        : from(from), to(to), distance(distance) {}
+};
+
+//Question 6
+//Add below plane class
+class Pilot
+{
+private:
+    string name;
+
+public:
+    //Constructor
+    Pilot(string name)
+    {
+        this->name = name;
+        cout << "Pilot " << name << " with memory address " << this << " is at the gate and ready to board the plane." << endl;
+
+    }
+    //Destructor
+    ~Pilot()
+    {
+        cout << "Pilot " << name << " is out of the airplane." << endl;
+    }
+    //Getter function for name
+    string get_name() const
+    {
+        return name;
+    }
+    //Pointer to object in plane class
+    Plane* myPlane;
+};
+
+
+// PROBLEM 3 & 4 /////////////////////////////////
+class Plane {
+
+    // initialize inputs for constructor
+    string from;
+    string to;
+
+private:
+    // private class members
+    double pos;
+    double vel;
+    double dist;
+    bool at_SCE;
+    string origin;
+    string destination;
+    Pilot* pilot;
+    Pilot* copilot;
+    //fix this container addition: how do I reference the container in a class
+
+public:
+    //public class memmbers
+
+        //constructor
+    Plane(const string& from, const string& to) :from(from), to(to), pos(0), vel(0),
+        dist(0), origin(from), destination(to), at_SCE(true), pilot(nullptr), copilot(nullptr) {   /*assign string variables "from" and
+                                                                                                    "to" to "origin" and "destination" variables*/
+
+        std::cout << "Plane created at: " << this << std::endl;  //print out the memory address of plane
+
+    };
+
+    //reference the memory address
+    Plane() {
+        std::cout << "Plane created at: " << this << std::endl;
+    }
+
+    //deconstructor
+    ~Plane() {
+        std::cout << "Plane Destroyed" << std::endl;
+    }
+    std::vector<Flight> flight_distance;
+
+    void set_pilots(Pilot* pilot_name, Pilot* copilot_name) {
+        pilot = pilot_name;
+        copilot = copilot_name;
+    }
+
+
+    //getter functions
+    // make constant so that they always return the value of corresponding variable
+    double get_pos() const { return pos; }
+    std::string get_origin() const { return origin; }
+    std::string get_destination() const { return destination; }
+    bool get_at_SCE() const { return at_SCE; }
+    double vel_func_get() const { return vel; }
+    // set velocity
+    void set_vel(double velocity) { vel = velocity; }
+    //void get_dist() const {return distance;}
+
+    void get_distance() {
+        for (const auto& flight : flight_distance) {
+            if (flight.from == origin && flight.to == destination) {
+                dist = flight.distance;
+                return;
+            }
+            else if (flight.from == destination && flight.to == origin) {
+                dist = flight.distance;
+                return;
+            }
+        }
+        dist = 0; // If no flight matches, set distance to 0
+    }
+
+
+    // function that returns nothing
+    void operate(double dt) {
+
+        get_distance();
+        if (pos <= dist) {
+            pos += vel / 3600 * dt;
+
+            at_SCE = 0; //false
+            return;
+
+        }
+        else {
+            if (destination == "SCE") {   // yes
+                at_SCE = 1; //true
+                swap(pilot, copilot);
+                swap(pilot->myPlane, copilot->myPlane);
+                cout << "The plane " << this << "is at SCE" << endl;
+                if (pilot) {
+                    cout << "Pilot " << pilot->get_name() << " with certificate number " << pilot << " is in control of the plane: " << this << endl;
+                }
+                if (copilot) {
+                    cout << "Pilot " << copilot->get_name() << " with certificate number " << copilot << " is in control of the plane: " << "0x0" << '\n' << endl;
+                }
+            }
+            else {
+
+            }
+            std::swap(origin, destination);
+            std::swap(from, to);
+            cout << "Flight from " << origin << " to " << destination << " finished. On to the next leg" << endl;
+
+            pos = 0.0;
+            return;
+        }
+    }
+
+};
+
+
+void swap(Pilot*& pilot, Pilot*& copilot)
+{
+    swap(pilot, copilot);
+    swap(pilot->myPlane, copilot->myPlane);
+}
+
+
+int main() {
+    //create object to reference memory address
+
+
+    string origin = "SCE";
+    string destination = "PHL";
+    Plane plane("SCE", "PHL");
+
+    // create a vector flight, then push the data of each flight into that vector
+    std::vector<Flight> flight_distance;
+    flight_distance.emplace_back("SCE", "PHL", 160);
+    flight_distance.emplace_back("SCE", "ORD", 640);
+    flight_distance.emplace_back("SCE", "EWR", 220);
+
+    // referencing flight_distance in the class Plane
+    plane.flight_distance = flight_distance;
+
+    //Question 5
+    plane.set_vel(450);
+    double timeStep = 15;
+    timeStep = timeStep;
+
+    int maxIterations = 1500;
+    int q5Iterations = 0;
+
+    string pilot1 = "Alpha"; //////////////////////////////
+    string pilot2 = "Beta";
+    Pilot pilot(pilot1);
+    Pilot copilot(pilot2);
+    plane.set_pilots(&pilot, &copilot);
+    pilot.myPlane = &plane;
+    copilot.myPlane = &plane;
+   
+    while (q5Iterations <= maxIterations)
+    {
+        //cout << "Time = " << timeStep * q5Iterations << "seconds.  Position = " << plane.get_pos() << "miles. \n";
+        if (q5Iterations == 0)
+        {
+            cout << "Pilot " << pilot1 << " with certificate number " << &pilot << " is in control of the plane: " << &plane << endl;
+            cout << "Copilot " << pilot2 << " with certificate number " << &copilot << " is in control of the plane: 0x0" << '\n' << endl;
+        }
+        plane.operate(timeStep);
+        ++q5Iterations;
+
+        if (plane.get_at_SCE()) {
+
+        }
+    }
+    // Question 7
+
+    //pilot.myPlane = &plane;
+    //copilot.myPlane = &plane;
+
+
+   // std::cout << pilot.myPlane << std::endl;
+   // std::cout << copilot.myPlane << std::endl;
+
+    //pilot = alpha
+    //copilot= beta
+
+    // out name, memory address, memory address of plane
+    // print out who is in control of the plane
+    return 0;
+}
