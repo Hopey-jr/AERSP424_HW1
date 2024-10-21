@@ -47,7 +47,7 @@ double rearseatweight = 0;
 double occupantweights;
 for (int j=0; j<=rearseat; j++)
 {
-    cout << "Enter the weight of each rear seat occupant (lbs): " << j+1;
+    cout << "Enter the weight of each rear seat occupant (lbs): " << j+1 << endl;
     cin >> occupantweights;
     rearseatweight += occupantweights; 
 };
