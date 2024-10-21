@@ -1,19 +1,10 @@
-//
-//  main.cpp
-//  Hw1_424
-//
-//  Created by jonathon hope on 10/4/24.
-//
-
-// Homework 1 Aersp 424
-//Group Members: Andrea Gandhi, Alex Gleba, Claudia Hunt, Jonathon Hope
-// Questions 1,2,3,4
 
 #include <iostream>
 #include <string>
 #include <vector>
 using namespace std;
-
+class Pilot;
+class Plane;
 // PROBLEM 2 //////////////////////////////////
 // single container (struct)
 struct Flight {
@@ -27,7 +18,34 @@ struct Flight {
         : from(from), to(to), distance(distance) {}
 };
 
+//Question 6
+//Add below plane class
+class Pilot
+{
+private:
+    string name;
 
+public:
+    //Constructor
+    Pilot(string name)
+    {
+        this->name = name;
+        cout << "Pilot " << name << " with memory address " << this << " is at the gate and ready to board the plane." << endl;
+        
+    }
+    //Destructor
+    ~Pilot()
+    {
+        cout << "Pilot " << name << " is out of the airplane." << endl;
+    }
+    //Getter function for name
+    string get_name() const
+    {
+        return name;
+    }
+    //Pointer to object in plane class
+    Plane* myPlane;
+};
 
 
 // PROBLEM 3 & 4 /////////////////////////////////
@@ -45,6 +63,8 @@ private:
     bool at_SCE;
     string origin;
     string destination;
+    Pilot* pilot;
+    Pilot* copilot;
     //fix this container addition: how do I reference the container in a class
 
 public:
@@ -52,11 +72,11 @@ public:
 
         //constructor
     Plane(const string& from, const string& to) :from(from), to(to), pos(0), vel(0),
-        dist(0), origin(from), destination(to), at_SCE(true) {   /*assign string variables "from" and
-        "to" to "origin" and "destination" variables*/
-
+    dist(0), origin(from), destination(to), at_SCE(true), pilot(nullptr), copilot(nullptr) {   /*assign string variables "from" and
+                                                                                                "to" to "origin" and "destination" variables*/
+        
         std::cout << "Plane created at: " << this << std::endl;  //print out the memory address of plane
-
+       
     };
 
     //reference the memory address
@@ -69,6 +89,13 @@ public:
         std::cout << "Plane Destroyed" << std::endl;
     }
     std::vector<Flight> flight_distance;
+   
+    void set_pilots(Pilot* pilot_name, Pilot* copilot_name) {
+            pilot = pilot_name;
+            copilot = copilot_name;
+        }
+    
+    
     //getter functions
     // make constant so that they always return the value of corresponding variable
     double get_pos() const { return pos; }
@@ -101,8 +128,7 @@ public:
         get_distance();
         if (pos <= dist) {
             pos += vel / 3600 * dt;
-            cout << "pos: " << pos << endl;
-            cout << "dist: " << dist << endl;
+           
             at_SCE = 0; //false
             return;
 
@@ -110,13 +136,24 @@ public:
         else {
             if (destination == "SCE") {   // yes
                 at_SCE = 1; //true
+                swap(pilot, copilot);
+                swap(pilot->myPlane, copilot->myPlane);
+                cout << "The plane " << this << "is at SCE" << endl;
+                if (pilot) {
+                    cout << "Pilot " << pilot->get_name() << " with certificate number " << pilot << " is in control of the plane: " << this << endl;
+                }
+                if (copilot) {
+                    cout << "Pilot " << copilot->get_name() << " with certificate number " << copilot << " is in control of the plane: " << "0x0" << '\n' << endl;
+                }
+               
             }
             else {
 
             }
-            cout << "Flight from " << origin << " to " << destination << " finished" << endl; //this displays at end of timestep too - how to fix?
+            cout << "Flight from " << origin << " to " << destination << " finished. On to the next leg" << endl; //this displays at end of timestep too - how to fix?
             std::swap(origin, destination);
             std::swap(from, to);
+            
             pos = 0.0;
             return;
         }
@@ -124,38 +161,14 @@ public:
 
 };
 
-//Question 6
-//Add below plane class
-class Pilot
-{
-private:
-    string name;
 
-public:
-    //Constructor
-    Pilot(string name)
-    {
-        this->name = name;
-        cout << "Pilot " << name << " with memory address " << this << " is at the gate and ready to board the plane." << endl;
-    }
-    //Destructor
-    ~Pilot()
-    {
-        cout << "Pilot " << name << " is out of the airplane." << endl;
-    }
-    //Getter function for name
-    string get_name() const
-    {
-        return name;
-    }
-    //Pointer to object in plane class
-    Plane* myPlane;
-};
 void swap (Pilot*& pilot, Pilot*& copilot)
 {
     swap(pilot, copilot);
     swap(pilot->myPlane, copilot->myPlane);
 }
+
+
 int main() {
     //create object to reference memory address
 
@@ -181,10 +194,12 @@ int main() {
     int maxIterations = 1500;
     int q5Iterations = 0;
 
-
+    Pilot pilot("Alpha");
+    Pilot copilot("Beta");
+    plane.set_pilots(&pilot,&copilot);
     while (q5Iterations <= maxIterations)
     {
-        std::cout << "Time = " << timeStep * q5Iterations << "seconds.  Position = " << plane.get_pos() << "miles. \n";
+        //std::cout << "Time = " << timeStep * q5Iterations << "seconds.  Position = " << plane.get_pos() << "miles. \n";
         plane.operate(timeStep);
         ++q5Iterations;
 
@@ -193,13 +208,13 @@ int main() {
         }
     }
     // Question 7
-    Pilot pilot("Alpha");
-    Pilot copilot("Beta");
-    pilot.myPlane = &plane;
-    copilot.myPlane = &plane;
+   
+    //pilot.myPlane = &plane;
+    //copilot.myPlane = &plane;
 
 
-
+   // std::cout << pilot.myPlane << std::endl;
+   // std::cout << copilot.myPlane << std::endl;
 
     //pilot = alpha
     //copilot= beta
@@ -210,20 +225,13 @@ int main() {
 
     while (q7Iterations <= maxIterations)
     {
-        plane.operate(timeStep);
         
         if (q7Iterations == 0)
         {
-            cout << "The plane is at SCE" << endl;
-            //Call pilot and get name and memory address to cout
-        }
-        if (plane.get_at_SCE())
-        {
-            cout << "The plane is at SCE" << endl;
-            swap(pilot, copilot);
-            //Call Pilot and get name and memory address to cout
+            
         }
         
+        plane.operate(timeStep);
         q7Iterations++;
     }
 
