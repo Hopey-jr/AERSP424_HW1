@@ -150,9 +150,10 @@ public:
             else {
 
             }
-            cout << "Flight from " << origin << " to " << destination << " finished. On to the next leg" << endl; //this displays at end of timestep too - how to fix?
-            std::swap(origin, destination);
-            std::swap(from, to);
+std::swap(origin, destination); ///////////////////////////////////////////
+            std::swap(from, to);            
+cout << "Flight from " << origin << " to " << destination << " finished. On to the next leg" << endl; //this displays at end of timestep too - how to fix?
+            
             
             pos = 0.0;
             return;
@@ -193,14 +194,25 @@ int main() {
 
     int maxIterations = 1500;
     int q5Iterations = 0;
-
-    Pilot pilot("Alpha");
-    Pilot copilot("Beta");
+   string pilot1 = "Alpha"; //////////////////////////////
+    string pilot2 = "Beta";
+    Pilot pilot(pilot1);
+    Pilot copilot(pilot2);
     plane.set_pilots(&pilot,&copilot);
+    pilot.myPlane = &plane;
+    copilot.myPlane = &plane;
     while (q5Iterations <= maxIterations)
     {
         //std::cout << "Time = " << timeStep * q5Iterations << "seconds.  Position = " << plane.get_pos() << "miles. \n";
-        plane.operate(timeStep);
+    if (q5Iterations == 0) ////////////////////////////////////////
+        {
+            cout << "Pilot " << pilot1 << " with certificate number " << &pilot << " is in control of the plane: " << &plane << endl;
+            cout << "Copilot " << pilot2 << " with certificate number " << &copilot << " is in control of the plane: 0x0" << '\n' << endl;
+
+        }        
+
+
+plane.operate(timeStep);
         ++q5Iterations;
 
         if (plane.get_at_SCE()) {
