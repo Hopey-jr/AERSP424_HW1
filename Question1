@@ -1,0 +1,192 @@
+// Question 1 - Claudia Hunt
+# include <iostream>
+
+using namespace std;
+
+void Question1(double gross_weight, double cg_location)
+{
+// Recieving information from the user (Inputs)
+
+// Determine Airplane empty weight variable 
+double Wempty; // lbs
+cout << "Enter Airplane empty-weight (lb): " << endl;
+cin >> Wempty;
+
+// Determine Airplane empty weight moment variable 
+double Wemptymoment; // (lb*in)
+cout << "Enter Airplane empty-weight moment (lb*in): " << endl;
+cin >> Wemptymoment;
+
+// Determine the number of front seat occupants
+double frontseat;
+cout << "Enter the number of front seat occupants: " << endl;
+cin >> frontseat;
+
+double frontseatweight = 0;
+// Determine the weight of each front seat occupant variable
+double occupantweight; 
+for (int i=0; i<frontseat; i++)
+{
+    cout << "Enter the weight of the each front seat occupant (lbs):" << i+1 << endl;
+    cin >> occupantweight;
+    frontseatweight += occupantweight; 
+};
+
+// Determine the front seat moment arm variable 
+double frontseatmomentarm; // inches
+cout << "Enter the front seat moment arm (inches): " << endl;
+cin >> frontseatmomentarm;
+
+// Determine the number of rear seat occupants
+double rearseat;
+cout << "Enter the number of rear seat occupants: " << endl;
+cin >> rearseat;
+
+double rearseatweight = 0;
+// Determine the weight of each front seat occupant variable 
+double occupantweights;
+for (int j=0; j<=rearseat; j++)
+{
+    cout << "Enter the weight of each rear seat occupant (lbs): " << j+1;
+    cin >> occupantweights;
+    rearseatweight += occupantweights; 
+};
+
+// Determine the rear seat moment arm variable 
+double rearseatmomentarm; // inches
+cout << "Enter the rear seat moment arm (inches): " << endl;
+cin >> rearseatmomentarm;
+
+// Determine the number of gallons of usable fuel variable
+double usablefuel; // gallons
+cout << "Enter the number of gallons of usable fuel (gallons): " << endl;
+cin >> usablefuel;
+
+// Determine the usable fuel weights per gallon variable
+double usablefuelweights; // pounds 
+cout << "Enter the number of usable fuel weights per gallon (pounds): " << endl;
+cin >> usablefuelweights;
+
+// Determine the fuel tank moment arm variable 
+double fueltankmomentarm; // inches
+cout << "Enter the fuel tank moment arm (inches): " << endl;
+cin >> fueltankmomentarm;
+
+// Determine the baggage weight variable
+double baggageweight; // pounds
+cout << "Enter the baggage weight (pounds): " << endl;
+cin >> baggageweight;
+
+// Determine the baggage moment arm variable
+double baggagemomentarm; // inches
+cout << "Enter the baggage moment arm (inches): " << endl;
+cin >> baggagemomentarm;
+
+
+// Calculating the gross weight
+double front_weight;
+front_weight = frontseat*frontseatweight;
+
+double rear_weight;
+rear_weight = rearseat*rearseatweight;
+
+double fuel_weight;
+fuel_weight = usablefuel*usablefuelweights; 
+
+gross_weight = (front_weight + rear_weight + baggageweight + fuel_weight + Wempty);
+
+// Calculating the total moments 
+
+// Moment = distance * force
+// Weight is the force since weight = mass*gravity (F=ma)
+// Distance is the moment arm 
+
+double front_seat_moment;
+front_seat_moment = frontseatmomentarm*frontseatweight;
+
+double rear_seat_moment;
+rear_seat_moment = rearseatmomentarm*rearseatweight;
+
+double baggage_moment;
+baggage_moment = baggagemomentarm*baggageweight;
+
+double fuel_moment;
+fuel_moment = fueltankmomentarm*usablefuel;
+
+double total_moment;
+total_moment = (front_seat_moment + rear_seat_moment + baggage_moment + fuel_moment + Wemptymoment);
+
+
+// Hard coded numbers based on problem statement - max values
+const double max_gross_weight = 2950; // lbs
+const double forward_cg_limit = 82.1; // inches
+const double aft_cg_limit = 84.7; // inches
+
+// Calculating the CG location
+cg_location = total_moment / gross_weight;
+
+if (gross_weight < max_gross_weight && cg_location < aft_cg_limit && cg_location > forward_cg_limit)
+{
+    cout << "The airplane is within the design limits." << endl;
+}
+
+int gallonsoffuel = usablefuel;
+// Check if the airplane is within design limits
+while (gross_weight > max_gross_weight || cg_location > aft_cg_limit || cg_location < forward_cg_limit)
+    {
+        if (gross_weight > max_gross_weight)
+        {
+            usablefuel -= 0.01;
+        }
+        else if (cg_location < aft_cg_limit)
+        {
+            usablefuel -= 0.01;
+        }
+        else if (cg_location > forward_cg_limit)
+        {
+            usablefuel += 0.01;
+        }
+        
+        // Recalculating the total weight and CG location
+        gross_weight = 0;
+        total_moment = 0;
+
+        front_weight = frontseat*frontseatweight;
+        rear_weight = rearseat*rearseatweight;
+        fuel_weight = usablefuel*usablefuelweights; 
+        gross_weight = (front_weight + rear_weight + baggageweight + fuel_weight + Wempty);
+
+         front_seat_moment = frontseatmomentarm*frontseatweight;
+         rear_seat_moment = rearseatmomentarm*rearseatweight;
+         baggage_moment = baggagemomentarm*baggageweight;
+         fuel_moment = fueltankmomentarm*usablefuel;
+         total_moment = (front_seat_moment + rear_seat_moment + baggage_moment + fuel_moment + Wemptymoment);
+         
+         cg_location = total_moment / gross_weight;
+        
+    }
+    if (gross_weight > max_gross_weight && cg_location > aft_cg_limit && cg_location < forward_cg_limit)
+    {
+        cout << "The airplane is not within the design limits." << endl;
+        // Output results involving fuel added/drained
+        double addfuel = usablefuel - gallonsoffuel; // Assuming initial fuel is 44 gallons
+        if (addfuel > 0)
+        {
+            cout << "The amount of fuel that needs to be added is " << abs(addfuel) << " gallons to meet the limits.\n";
+        }
+
+        if (addfuel < 0)
+        {cout << "The amount of fuel that needs to be drained is " << abs(addfuel) << " gallons to meet the limits.\n";
+        }
+        cout << "The new total weight of the airplane is " << gross_weight << " pounds.\n";
+        std::cout << "The new location of the C.G. is " << cg_location << " inches.\n";
+    }
+    
+}
+
+int main()
+{
+    double gross_weight = 0, cg_location = 0;
+    Question1(gross_weight, cg_location);
+    return 0;
+}
