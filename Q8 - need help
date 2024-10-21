@@ -137,7 +137,7 @@ void Question1(double gross_weight, double cg_location)
         cout << "The airplane is not within limits...yet" << endl;
     }
 
-    int gallonsoffuel = usablefuel;
+    double gallonsoffuel = usablefuel;
     // Check if the airplane is within design limits
     while (gross_weight > max_gross_weight || cg_location > aft_cg_limit || cg_location < forward_cg_limit)
     {
@@ -231,13 +231,13 @@ private:
 
 public:
     //Constructor
-        Pilot(const char* name)
-        {
-            this->name = (char*)malloc(strlen(name) + 1);
-            strcpy(this->name, name);
-            cout << "Pilot " << this->name << " with memory address " << this << " is at the gate and ready to board the plane." << endl;
-        }
-    
+    Pilot(const char* name)
+    {
+        this->name = (char*)malloc(strlen(name) + 1);
+        strcpy(this->name, name);
+        cout << "Pilot " << this->name << " with memory address " << this << " is at the gate and ready to board the plane." << endl;
+    }
+
     //Destructor
     ~Pilot() {
         free(name);
@@ -276,18 +276,18 @@ public:
     //public class memmbers
 
         //constructor
-            Plane(const char* from, const char* to) {
-            this->from = (char*)malloc(strlen(from) + 1);
-            strcpy(this->from, from);
-            this->to = (char*)malloc(strlen(to) + 1);
-            strcpy(this->to, to);
-            this->origin = (char*)malloc(strlen(from) + 1);
-            strcpy(this->origin, from);
-            this->destination = (char*)malloc(strlen(to) + 1);
-            strcpy(this->destination, to);
-            pos = vel = dist = 0;
-            at_SCE = true;
-            pilot = copilot = nullptr;
+    Plane(const char* from, const char* to) {
+        this->from = (char*)malloc(strlen(from) + 1);
+        strcpy(this->from, from);
+        this->to = (char*)malloc(strlen(to) + 1);
+        strcpy(this->to, to);
+        this->origin = (char*)malloc(strlen(from) + 1);
+        strcpy(this->origin, from);
+        this->destination = (char*)malloc(strlen(to) + 1);
+        strcpy(this->destination, to);
+        pos = vel = dist = 0;
+        at_SCE = true;
+        pilot = copilot = nullptr;
 
         std::cout << "Plane created at: " << this << std::endl;  //print out the memory address of plane
 
@@ -323,17 +323,17 @@ public:
 
     void get_distance() {
         for (const auto& flight : flight_distance) {
-            
-         
+
+
             if (strcmp(from, origin) == 0 && strcmp(to, destination) == 0) {
-                            dist = flight.distance;
-                            return;
-                        }
+                dist = flight.distance;
+                return;
+            }
         }
         dist = 0; // If no flight matches, set distance to 0
     }
 
-    char* At_SCE = "SCE";
+    const char* At_SCE = "SCE";
     // function that returns nothing
     void operate(double dt) {
 
@@ -384,30 +384,32 @@ int main() {
     //create object to reference memory address
 
 
-    char* origin = "SCE";
-    char* destination = "PHL";
+    const char* origin = "SCE";
+    const char* destination = "PHL";
     Plane* plane = (Plane*)malloc(sizeof(Plane));
-        new (plane) Plane(origin, destination); // Placement new to construct in allocated memory
+    new (plane) Plane(origin, destination); // Placement new to construct in allocated memory
+    
 
-        std::vector<Flight> flight_distance;
-        flight_distance.push_back(Flight(origin, destination, 160));
 
-        plane->flight_distance = flight_distance;
+    std::vector<Flight> flight_distance;
+    flight_distance.push_back(Flight(origin, destination, 160));
 
-        plane->set_vel(450);
+    plane->flight_distance = flight_distance;
 
-        Pilot* pilot = (Pilot*)malloc(sizeof(Pilot));
-        new (pilot) Pilot("Alpha"); // Placement new
+    plane->set_vel(450);
 
-        Pilot* copilot = (Pilot*)malloc(sizeof(Pilot));
-        new (copilot) Pilot("Beta");
+    Pilot* pilot = (Pilot*)malloc(sizeof(Pilot));
+    new (pilot) Pilot("Alpha"); // Placement new
 
-        plane->set_pilots(pilot, copilot);
-        pilot->myPlane = plane;
-        copilot->myPlane = nullptr;
+    Pilot* copilot = (Pilot*)malloc(sizeof(Pilot));
+    new (copilot) Pilot("Beta");
+
+    plane->set_pilots(pilot, copilot);
+    pilot->myPlane = plane;
+    copilot->myPlane = nullptr;
 
     int q5Iterations = 0;
-   int maxIterations = 1500;
+    int maxIterations = 1500;
     double time_Step = 15;
     while (q5Iterations <= maxIterations)
     {
