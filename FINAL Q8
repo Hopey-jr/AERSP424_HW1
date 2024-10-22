@@ -1,4 +1,4 @@
-
+// We utilized AI in this section to double check that everything had been converted to C.  
 #include <iostream>
 #include <string>
 #include <cstring>
