@@ -402,7 +402,7 @@ int main() {
    
     while (q5Iterations <= maxIterations)
     {
-        cout << "Time = " << timeStep * q5Iterations << "seconds.  Position = " << plane.get_pos() << "miles. \n";
+        //cout << "Time = " << timeStep * q5Iterations << "seconds.  Position = " << plane.get_pos() << "miles. \n";
         if (q5Iterations == 0)
         {
             cout << "Pilot " << pilot1 << " with certificate number " << &pilot << " is in control of the plane: " << &plane << endl;
