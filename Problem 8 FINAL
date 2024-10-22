@@ -1,0 +1,235 @@
+
+#include <iostream>
+#include <string>
+#include <cstring>
+
+#include <vector>
+using namespace std;
+
+// PROBLEM 2 //////////////////////////////////
+// single container (struct)
+class Pilot;
+class Plane;
+// PROBLEM 2 //////////////////////////////////
+// single container (struct)
+struct Flight {
+
+    //innitialize inputs for struct named, "Flight"
+    char* from;
+    char* to;
+    int distance;
+
+    Flight(const char* from, const char* to, int distance) {
+        this->from = (char*)malloc(strlen(from) + 1);
+        strcpy(this->from, from);
+        this->to = (char*)malloc(strlen(to) + 1);
+        strcpy(this->to, to);
+        this->distance = distance;
+    }
+
+};
+
+//Question 6
+//Add below plane class
+class Pilot
+{
+private:
+    char* name;
+
+public:
+    //Constructor
+    Pilot(const char* name)
+    {
+        this->name = (char*)malloc(strlen(name) + 1);
+        strcpy(this->name, name);
+        cout << "Pilot " << this->name << " with memory address " << this << " is at the gate and ready to board the plane." << endl;
+    }
+
+    //Destructor
+    void Destruction_Pilot() {
+
+        cout << "Pilot " << name << " is out of the airplane." << endl;
+        free(name);
+    }
+    //Getter function for name
+    string get_name() const
+    {
+        return name;
+    }
+    //Pointer to object in plane class
+    Plane* myPlane;
+};
+
+
+// PROBLEM 3 & 4 /////////////////////////////////
+class Plane {
+
+    // initialize inputs for constructor
+    char* from;
+    char* to;
+
+private:
+    // private class members
+    double pos;
+    double vel;
+    double dist;
+    bool at_SCE;
+    char* origin;
+    char* destination;
+    Pilot* pilot;
+    Pilot* copilot;
+
+public:
+    //public class memmbers
+
+        //constructor
+    Plane(const char* from, const char* to) {
+        this->from = (char*)malloc(strlen(from) + 1);
+        strcpy(this->from, from);
+        this->to = (char*)malloc(strlen(to) + 1);
+        strcpy(this->to, to);
+        this->origin = (char*)malloc(strlen(from) + 1);
+        strcpy(this->origin, from);
+        this->destination = (char*)malloc(strlen(to) + 1);
+        strcpy(this->destination, to);
+        pos = vel = dist = 0;
+        at_SCE = true;
+        pilot = copilot = nullptr;
+
+        std::cout << "Plane created at: " << this << std::endl;  //print out the memory address of plane
+
+    };
+
+    //reference the memory address
+    Plane() {
+        std::cout << "Plane created at: " << this << std::endl;
+    }
+
+    //deconstructor
+    void Destruction_Plane() {
+        std::cout << "Plane Destroyed" << std::endl;
+    }
+    std::vector<Flight> flight_distance;
+
+    void set_pilots(Pilot* pilot_name, Pilot* copilot_name) {
+        pilot = pilot_name;
+        copilot = copilot_name;
+    }
+
+
+    //getter functions
+    // make constant so that they always return the value of corresponding variable
+    double get_pos() const { return pos; }
+    const char* get_origin() const { return origin; }
+    const char* get_destination() const { return destination; }
+    bool get_at_SCE() const { return at_SCE; }
+    double vel_func_get() const { return vel; }
+    // set velocity
+    void set_vel(double velocity) { vel = velocity; }
+
+    void get_distance() {
+        for (const auto& flight : flight_distance) {
+
+
+            if (strcmp(from, origin) == 0 && strcmp(to, destination) == 0) {
+                dist = flight.distance;
+                return;
+            }
+        }
+        dist = 0; // If no flight matches, set distance to 0
+    }
+
+    const char* At_SCE = "SCE";
+    // function that returns nothing
+    void operate(double dt) {
+
+        get_distance();
+        if (pos <= dist) {
+            pos += vel / 3600 * dt;
+
+            at_SCE = 0; //false
+            return;
+
+        }
+        else {
+            if (strcmp(destination, At_SCE) == 0) {   // yes
+                at_SCE = 1; //true
+                swap(pilot, copilot);
+                swap(pilot->myPlane, copilot->myPlane);
+                cout << "The plane " << this << "is at SCE" << endl;
+                if (pilot) {
+                    cout << "Pilot " << pilot->get_name() << " with certificate number " << pilot << " is in control of the plane: " << this << endl;
+                }
+                if (copilot) {
+                    cout << "Pilot " << copilot->get_name() << " with certificate number " << copilot << " is in control of the plane: " << "0x0" << '\n' << endl;
+                }
+            }
+            else {
+
+            }
+            swap(origin, destination);
+            swap(from, to);
+            cout << "Flight from " << origin << " to " << destination << " finished. On to the next leg" << endl;
+
+            pos = 0.0;
+            return;
+        }
+    }
+
+};
+
+
+void swap(Pilot*& pilot, Pilot*& copilot)
+{
+    swap(pilot, copilot);
+    swap(pilot->myPlane, copilot->myPlane);
+}
+
+
+int main() {
+    //create object to reference memory address
+
+
+    const char* origin = "SCE";
+    const char* destination = "PHL";
+    Plane* plane = (Plane*)malloc(sizeof(Plane));
+    new (plane) Plane(origin, destination); // Placement new to construct in allocated memory
+
+    std::vector<Flight> flight_distance;
+    flight_distance.push_back(Flight(origin, destination, 160));
+
+    plane->flight_distance = flight_distance;
+
+    plane->set_vel(450);
+
+    Pilot* pilot = (Pilot*)malloc(sizeof(Pilot));
+    new (pilot) Pilot("Alpha"); // Placement new
+
+    Pilot* copilot = (Pilot*)malloc(sizeof(Pilot));
+    new (copilot) Pilot("Beta");
+
+    plane->set_pilots(pilot, copilot);
+    pilot->myPlane = plane;
+    copilot->myPlane = nullptr;
+
+    int q5Iterations = 0;
+    int maxIterations = 1500;
+    double time_Step = 15;
+    while (q5Iterations <= maxIterations)
+    {
+        if (q5Iterations == 0)
+        {
+            cout << "Pilot " << pilot->get_name() << " with certificate number " << pilot << " is in control of the plane: " << plane << endl;
+            cout << "Copilot " << copilot->get_name() << " with certificate number " << copilot << " is in control of the plane: 0x0" << '\n' << endl;
+        }
+        plane->operate(time_Step);
+        ++q5Iterations;
+
+    }
+
+    plane->Destruction_Plane();
+    pilot->Destruction_Pilot();
+    copilot->Destruction_Pilot();
+
+    return 0;
+}
